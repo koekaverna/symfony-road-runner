@@ -1,0 +1,9 @@
+services:
+  app:
+    build:
+      context: ./docker
+      target: development
+    restart: always
+    volumes:
+      - .:/app
+    user: 1000:1000

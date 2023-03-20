@@ -36,3 +36,14 @@ reload:
     http:
       dirs: ["."]
       recursive: true
+
+rpc:
+  listen: tcp://127.0.0.1:6001
+
+kv:
+  # User defined name of the storage.
+  memory:
+    # Required section.
+    # Should be "memory" for the memory driver.
+    driver: memory
+    config: {}

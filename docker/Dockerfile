@@ -4,8 +4,9 @@
 FROM php:8.2.4-cli-alpine3.17 AS scratch
 
 RUN set -x \
-    && apk add --no-cache --virtual .build-deps icu-dev \
+    && apk add --no-cache --virtual .build-deps icu-dev linux-headers \
     && docker-php-ext-install -j$(nproc) intl \
+    && docker-php-ext-install -j$(nproc) sockets \
     && apk add --no-cache icu-libs \
     && apk del .build-deps
 
@@ -29,6 +30,8 @@ CMD ["composer"]
 #########################
 FROM scratch AS development
 
+ARG APP_UID
+
 ENV XDEBUG_VERSION 3.2.0
 RUN set -x \
     && apk add --no-cache --virtual .build-deps linux-headers $PHPIZE_DEPS \
@@ -41,6 +44,12 @@ RUN cp ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 COPY --from=composer /usr/local/bin/composer /usr/local/bin/composer
 
+COPY start-container /usr/local/bin/start-container
+RUN chmod +x /usr/local/bin/start-container
+
 WORKDIR /app
 
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+RUN adduser -S app -u $APP_UID
+USER app
+
+ENTRYPOINT ["start-container"]

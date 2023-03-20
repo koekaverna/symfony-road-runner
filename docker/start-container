@@ -1,0 +1,9 @@
+#!/usr/bin/env /bin/sh
+
+composer install
+
+if [ ! -f bin/rr ]; then
+    vendor/bin/rr get --location bin/
+fi
+
+bin/rr serve -c .rr.dev.yaml --debug

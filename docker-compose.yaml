@@ -10,3 +10,12 @@ services:
       - .:/app
     ports:
       - 8080:8080
+    networks:
+      - default
+      - temporal-network
+
+networks:
+  default:
+    driver: bridge
+  temporal-network:
+    external: true

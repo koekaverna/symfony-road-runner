@@ -3,12 +3,21 @@
 #####################
 FROM php:8.2.4-cli-alpine3.17 AS scratch
 
+# Install PHP Extensions
 RUN set -x \
     && apk add --no-cache --virtual .build-deps icu-dev linux-headers \
     && docker-php-ext-install -j$(nproc) intl \
     && docker-php-ext-install -j$(nproc) sockets \
     && apk add --no-cache icu-libs \
     && apk del .build-deps
+
+# Protobuf and GRPC
+ENV PROTOBUF_VERSION "3.22.1"
+RUN apk add --no-cache --virtual .build-deps zlib-dev linux-headers $PHPIZE_DEPS \
+    && pecl channel-update pecl.php.net \
+    && pecl install protobuf-${PROTOBUF_VERSION} grpc \
+    && docker-php-ext-enable protobuf grpc \
+    && apk del -f .build-deps
 
 ######################
 ### Composer image ###

@@ -4,6 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.temporal.workflows:
+        - App\Temporal\Workflow\WelcomeWorkflow
 
 services:
     # default configuration for services in *this* file
@@ -18,9 +20,26 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
+            - '../src/Temporal/Workflow/'
             - '../src/Kernel.php'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     Spiral\RoadRunner\KeyValue\StorageInterface:
         factory: ['@App\Factory\MemoryStorageFactory', 'create']
+
+    App\Temporal\Worker\TemporalWorker:
+        arguments:
+            $workflows: '%app.temporal.workflows%'
+            $activities: !tagged_iterator app.temporal.activity
+
+    Temporal\Worker\WorkerFactoryInterface:
+        factory: ['Temporal\WorkerFactory', 'create']
+
+    Temporal\Client\GRPC\ServiceClientInterface:
+        factory: ['Temporal\Client\GRPC\ServiceClient', 'create']
+        arguments: ['temporal:7233']
+
+    Temporal\Client\WorkflowClientInterface:
+        factory: ['Temporal\Client\WorkflowClient', 'create']
+        arguments: ['@Temporal\Client\GRPC\ServiceClientInterface']

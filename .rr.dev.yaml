@@ -47,3 +47,8 @@ kv:
     # Should be "memory" for the memory driver.
     driver: memory
     config: {}
+
+temporal:
+  address: "temporal:7233"
+  activities:
+    num_workers: 4

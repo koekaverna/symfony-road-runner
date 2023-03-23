@@ -34,9 +34,8 @@ RUN set -x \
     && apk add --no-cache --virtual .build-deps linux-headers $PHPIZE_DEPS \
     && pecl install xdebug-${XDEBUG_VERSION} \
     && docker-php-ext-enable xdebug \
-    && apk del -f .build-deps \
-    && echo xdebug.mode=develop,debug >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo xdebug.client_host=host.docker.internal >> /usr/local/etc/php/conf.d/xdebug.ini
+    && apk del -f .build-deps
+COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 RUN cp ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 

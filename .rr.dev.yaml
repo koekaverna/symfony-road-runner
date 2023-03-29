@@ -47,3 +47,12 @@ kv:
     # Should be "memory" for the memory driver.
     driver: memory
     config: {}
+
+jobs:
+  consume: [ "request-proxy" ]
+  pipelines:
+    request-proxy:
+      driver: memory
+      config:
+        priority: 10
+        prefetch: 10

@@ -11,6 +11,11 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+    _instanceof:
+        # services whose classes are instances of CustomInterface will be tagged automatically
+        App\Task\TaskInterface:
+            tags: ['app.tasks']
+
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -24,3 +29,13 @@ services:
     # please note that last definitions always *replace* previous ones
     Spiral\RoadRunner\KeyValue\StorageInterface:
         factory: ['@App\Factory\MemoryStorageFactory', 'create']
+
+    App\Worker\JobWorker:
+        arguments:
+            $locator: !tagged_locator {tag: 'app.tasks'}
+
+    Spiral\RoadRunner\Jobs\Consumer: ~
+    Spiral\RoadRunner\Jobs\ConsumerInterface: '@Spiral\RoadRunner\Jobs\Consumer'
+
+    Spiral\RoadRunner\Jobs\Jobs: ~
+    Spiral\RoadRunner\Jobs\JobsInterface: '@Spiral\RoadRunner\Jobs\Jobs'

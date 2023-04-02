@@ -1,0 +1,31 @@
+services:
+  _defaults:
+    autowire: true
+
+  Temporal\Client\GRPC\ServiceClientInterface:
+    factory: ['Temporal\Client\GRPC\ServiceClient', 'create']
+    arguments: ['%env(TEMPORAL_ADDRESS)%']
+
+  Temporal\Client\WorkflowClient:
+    arguments:
+      $converter: '@Temporal\DataConverter\DataConverter'
+  Temporal\Client\WorkflowClientInterface: '@Temporal\Client\WorkflowClient'
+
+  Temporal\DataConverter\NullConverter: ~
+  Temporal\DataConverter\BinaryConverter: ~
+  Temporal\DataConverter\ProtoJsonConverter: ~
+  Temporal\DataConverter\JsonConverter: ~
+
+  Temporal\DataConverter\DataConverter:
+    arguments:
+      - '@Temporal\DataConverter\NullConverter'
+      - '@Temporal\DataConverter\BinaryConverter'
+      - '@Temporal\DataConverter\ProtoJsonConverter'
+      - '@App\Temporal\DataConverter\ObjectJsonConverter'
+      - '@Temporal\DataConverter\JsonConverter'
+
+  Temporal\WorkerFactory:
+    factory: ['Temporal\WorkerFactory', 'create']
+    arguments:
+      $converter: '@Temporal\DataConverter\DataConverter'
+  Temporal\Worker\WorkerFactoryInterface: '@Temporal\WorkerFactory'

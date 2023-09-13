@@ -1,7 +1,7 @@
 #####################
 ### Scratch image ###
 #####################
-FROM php:8.2.4-cli-alpine3.17 AS scratch
+FROM php:8.2.10-cli-alpine3.18 AS scratch
 
 RUN set -x \
     && apk add --no-cache --virtual .build-deps icu-dev linux-headers \
@@ -18,7 +18,7 @@ FROM scratch AS composer
 # Setup Composer authentetication (https://getcomposer.org/doc/03-cli.md#composer-auth)
 ARG COMPOSER_AUTH
 
-ENV COMPOSER_VERSION 2.5.4
+ENV COMPOSER_VERSION 2.6.2
 RUN set -x \
     && curl --silent --show-error --retry 5 https://getcomposer.org/installer \
         | php -- --install-dir=/usr/local/bin --filename=composer --version=${COMPOSER_VERSION}
@@ -32,7 +32,7 @@ FROM scratch AS development
 
 ARG APP_UID
 
-ENV XDEBUG_VERSION 3.2.0
+ENV XDEBUG_VERSION 3.2.2
 RUN set -x \
     && apk add --no-cache --virtual .build-deps linux-headers $PHPIZE_DEPS \
     && pecl install xdebug-${XDEBUG_VERSION} \

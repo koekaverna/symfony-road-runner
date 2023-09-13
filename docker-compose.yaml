@@ -5,7 +5,6 @@ services:
       target: development
       args:
         APP_UID: 1000
-    restart: always
     volumes:
       - .:/app
     ports:

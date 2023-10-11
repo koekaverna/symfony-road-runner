@@ -10,6 +10,12 @@ RUN set -x \
     && apk add --no-cache icu-libs \
     && apk del .build-deps
 
+RUN set -x \
+    && apk add --no-cache --virtual .build-deps postgresql-dev \
+    && docker-php-ext-install -j$(nproc) pdo pdo_pgsql \
+    && apk add --no-cache postgresql-libs \
+    && apk del .build-deps
+
 ######################
 ### Composer image ###
 ######################
